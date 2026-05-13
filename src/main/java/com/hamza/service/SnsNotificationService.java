@@ -1,6 +1,7 @@
 package com.hamza.notification_service.service;
 
 import com.hamza.notification_service.dto.NotificationRequest;
+
 import org.springframework.stereotype.Service;
 
 import software.amazon.awssdk.services.sns.SnsClient;
@@ -11,24 +12,24 @@ public class SnsNotificationService {
 
     private final SnsClient snsClient = SnsClient.create();
 
+    private final String TOPIC_ARN =
+            "arn:aws:sns:us-east-1:124447100863:notification-topic";
+
     public String sendNotification(NotificationRequest request) {
 
         String finalMessage =
                 "Priority: " + request.getPriority()
-                        + "\nMessage: " + request.getMessage();
+                + "\nMessage: " + request.getMessage();
 
-        if ("SMS".equalsIgnoreCase(request.getType())) {
+        PublishRequest publishRequest =
+                PublishRequest.builder()
+                        .topicArn(TOPIC_ARN)
+                        .message(finalMessage)
+                        .subject("Spring Boot AWS Notification")
+                        .build();
 
-            PublishRequest publishRequest = PublishRequest.builder()
-                    .phoneNumber(request.getPhoneNumber())
-                    .message(finalMessage)
-                    .build();
+        snsClient.publish(publishRequest);
 
-            snsClient.publish(publishRequest);
-
-            return "SMS Notification Sent";
-        }
-
-        return "Unsupported Notification Type";
+        return "Email Notification Sent Successfully";
     }
 }

@@ -1,0 +1,6 @@
+aws:
+  region: us-east-1
+cloud:
+  aws:
+    region:
+      static: us-east-1
